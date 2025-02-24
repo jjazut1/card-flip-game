@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Cedarville+Cursive&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Cedarville+Cursive&family=Playwright+USA+Traditional&display=swap" rel="stylesheet">
+
+
+    <title>Card Flip Game</title>
+    <style>
+        body {
+            font-family: 'Comic Neue', cursive;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f8ff;
+        }
+
+       #gameContainer {
+    display: flex;
+    align-items: flex-start; /* Align both decks at the top */
+    justify-content: center; /* Center the decks inside the container */
+    gap: 20px; /* Reduce spacing */
+    width: fit-content; /* Fit content width */
+    margin: 0 auto; /* Center container */
+    border: solid gray;
+}
+
+#cardDeck, #flippedCards {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center items */
+    justify-content: flex-start;
+    width: 60px;
+    height: 90px;
+    position: relative;
+}
+
+.card {
+    width: 50px;
+    height: 70px;
+    background: #fff;
+    border-radius: 8px;
+    border: 2px solid #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 48px;
+    text-align: center;
+    font-weight: bold;
+    transition: transform 0.6s;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* Flip card positioning */
+.card.flipped {
+    transform: rotateY(0deg);
+    background: #fdd835;
+    color: #000;
+    position: relative;
+    top: auto;
+    left: auto;
+    z-index: auto;
+}
+
+
+
+        #resetButton {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            border: none;
+            background: #ff5252;
+            color: white;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Flip a Card!</h1>
+    <div id="gameContainer">
+        <div id="cardDeck"></div>
+        <div id="flippedCards"></div>
+    </div>
+    <button id="toggleCaseButton" onclick="toggleCase()">Toggle Upper/Lowercase</button>
+    <button id="toggleFontButton" onclick="toggleFont()">Toggle Font</button>
+    <button id="resetButton" onclick="resetGame()">Reset Game</button>
+    <audio id="flipSound" src="https://www.myinstants.com/media/sounds/card-flip.mp3"></audio>
+
+    <script>
+        //const alphabetUpper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+        const alphabet = "abcdefghijklmnopqrstuvwxyz".split("");
+
+        let deck = [...alphabet];
+        const cardDeck = document.getElementById("cardDeck");
+        const flippedCards = document.getElementById("flippedCards");
+        const flipSound = document.getElementById("flipSound");
+
+        let isUppercase = true; // Tracks whether letters are uppercase or lowercase
+
+function createDeck() {
+    cardDeck.innerHTML = "";
+    const letters = isUppercase ? "ABCDEFGHIJKLMNOPQRSTUVWXYZ" : "abcdefghijklmnopqrstuvwxyz";
+    deck = letters.split(""); // Use selected case
+
+    deck.forEach(letter => {
+        let card = document.createElement("div");
+        card.classList.add("card");
+        card.dataset.letter = letter;
+        card.innerHTML = "?"; // Hide letter initially
+        card.addEventListener("click", flipRandomCard);
+        cardDeck.appendChild(card);
+    });
+}
+
+function toggleCase() {
+    isUppercase = !isUppercase; // Toggle case
+    resetGame(); // Reset game with new case
+}
+
+
+        function flipRandomCard() {
+    if (deck.length === 0) return;
+    
+    const randomIndex = Math.floor(Math.random() * deck.length);
+    const letter = deck.splice(randomIndex, 1)[0];
+    
+    let flippedCard = document.createElement("div");
+    flippedCard.classList.add("card", "flipped");
+    flippedCard.textContent = letter;
+
+    // Ensure only one flipped deck
+    flippedCards.innerHTML = "";
+    flippedCards.appendChild(flippedCard);
+    
+    flipSound.play(); // Play flip sound
+}
+
+
+        function resetGame() {
+            deck = [...alphabet];
+            flippedCards.innerHTML = "";
+            createDeck();
+        }
+
+        createDeck(); // Initialize the deck on page load
+
+        const fonts = ["'Comic Neue', cursive", "'Cedarville Cursive', cursive", "'Playwright USA Traditional', cursive"];
+let fontIndex = 0; // Track the current font index
+
+function toggleFont() {
+    fontIndex = (fontIndex + 1) % fonts.length; // Cycle through fonts
+    document.body.style.fontFamily = fonts[fontIndex]; // Apply the selected font
+}
+
+
+    </script>
+</body>
+</html>
